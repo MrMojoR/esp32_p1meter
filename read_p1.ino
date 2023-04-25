@@ -75,9 +75,7 @@ long getValue(char *buffer, int maxlen, char startchar, char endchar)
  */
 bool decodeTelegram(int len)
 {
-    int startChar = findCharInArrayRev(telegram, '/', len);
     int endChar = findCharInArrayRev(telegram, '!', len);
-    bool validCRCFound = false;
 
 #ifdef DEBUG
     for (int cnt = 0; cnt < len; cnt++)
@@ -87,34 +85,7 @@ bool decodeTelegram(int len)
     Serial.print("\n");
 #endif
 
-    if (startChar >= 0)
-    {
-        // * Start found. Reset CRC calculation
-        currentCRC = crc16(0x0000, (unsigned char *)telegram + startChar, len - startChar);
-    }
-    else if (endChar >= 0)
-    {
-        // * Add to crc calc
-        currentCRC = crc16(currentCRC, (unsigned char *)telegram + endChar, 1);
-
-        char messageCRC[5];
-        strncpy(messageCRC, telegram + endChar + 1, 4);
-
-        messageCRC[4] = 0; // * Thanks to HarmOtten (issue 5)
-        validCRCFound = (strtol(messageCRC, NULL, 16) == currentCRC);
-
-#ifdef DEBUG
-        if (validCRCFound)
-            Serial.println(F("CRC Valid!"));
-        else
-            Serial.println(F("CRC Invalid!"));
-#endif
-        currentCRC = 0;
-    }
-    else
-    {
-        currentCRC = crc16(currentCRC, (unsigned char *)telegram, len);
-    }
+  
 
     // Loops throug all the telegramObjects to find the code in the telegram line
     // If it finds the code the value will be stored in the object so it can later be send to the mqtt broker
@@ -128,15 +99,16 @@ bool decodeTelegram(int len)
                 telegramObjects[i].value = newValue;
                 telegramObjects[i].sendData = true;
             }
-            break;
-
 #ifdef DEBUG
             Serial.println((String) "Found a Telegram object: " + telegramObjects[i].name + " value: " + telegramObjects[i].value);
 #endif
+            break;
+
         }
     }
 
-    return validCRCFound;
+    // Without CRC validation we only check for the end character
+    return endChar !=-1;
 }
 
 bool readP1Serial()
@@ -153,6 +125,10 @@ bool readP1Serial()
             // Reads the telegram untill it finds a return character
             // That is after each line in the telegram
             int len = Serial2.readBytesUntil('\n', telegram, P1_MAXLINELENGTH);
+			// Skip the empty lines
+            if(len < 2) {
+              continue;
+            }
 
             telegram[len] = '\n';
             telegram[len + 1] = 0;

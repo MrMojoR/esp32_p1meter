@@ -11,18 +11,18 @@
 // #define UPDATE_FULL_INTERVAL 1800000 // 30 minutes
 // #define UPDATE_FULL_INTERVAL 3600000 // 1 Hour
 
-#define HOSTNAME "p1meter"
-#define OTA_PASSWORD "admin"
+define HOSTNAME "p1meter"
+define OTA_PASSWORD "admin"
 
-#define BAUD_RATE 115200
-#define RXD2 16
-#define TXD2 17
-#define P1_MAXLINELENGTH 1050
+define BAUD_RATE 115200
+define RXD2 16
+define TXD2 17
+define P1_MAXLINELENGTH 1500
 
-#define MQTT_MAX_RECONNECT_TRIES 100
-#define MQTT_ROOT_TOPIC "sensors/power/p1meter"
+define MQTT_MAX_RECONNECT_TRIES 100
+define MQTT_ROOT_TOPIC "sensors/power/p1meter"
 
-#define NUMBER_OF_READOUTS 19
+define NUMBER_OF_READOUTS 12
 
 long LAST_RECONNECT_ATTEMPT = 0;
 long LAST_UPDATE_SENT = 0;
