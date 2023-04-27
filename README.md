@@ -2,6 +2,8 @@
 Software for the ESP32 (DoIT ESP DEVKIT v1/NodeMcu 32s etc.) that decodes and sends P1 smart meter (DSMR) data to a MQTT broker, with the possibility for Over The Air (OTA) firmware updates.
 
 ## About this fork
+This fork works with Sanxing SX6x1 meters with the hungarian EON standard. I have removed the crc check as well.
+
 This fork was based on a ESP8266 and I only had a ESP32 laying around so I'm trying to make this work on my ESP32 DoIT board.
 
 The original project of [fliphess](https://github.com/fliphess/esp8266_p1meter) has issues with DSMR 5.0 meters, which send telegrams every 1 second at a high 115200 baud rate. 
